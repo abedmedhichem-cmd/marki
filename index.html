@@ -177,7 +177,7 @@
     <div class="topbar">
       <div>
         <h1>Marki et les cœurs 💜</h1>
-        <p class="subtitle">Récupère les cœurs, trouve la clé, évite les dangers et rejoins le portail.</p>
+        <p class="subtitle">Récupère les cœurs, trouve la clé et rejoins le portail.</p>
       </div>
       <div class="hud">
         <div class="pill" id="levelBox">Niveau 1 / 3</div>
@@ -301,13 +301,8 @@ Je t’aime énormément, Marki. Vraiment. 💜`;
           { x: 840, y: 205, taken: false },
           { x: 430, y: 425, taken: false }
         ],
-        spikes: [
-          { x: 285, y: 445, w: 70, h: 25 },
-          { x: 620, y: 445, w: 70, h: 25 }
-        ],
-        enemies: [
-          { x: 500, y: 438, w: 34, h: 32, minX: 455, maxX: 610, speed: 1.15, dir: 1 }
-        ]
+        spikes: [],
+        enemies: []
       },
       {
         name: "Niveau 2",
@@ -337,16 +332,8 @@ Je t’aime énormément, Marki. Vraiment. 💜`;
           { x: 455, y: 205, taken: false },
           { x: 655, y: 165, taken: false }
         ],
-        spikes: [
-          { x: 220, y: 445, w: 70, h: 25 },
-          { x: 390, y: 445, w: 85, h: 25 },
-          { x: 610, y: 445, w: 90, h: 25 },
-          { x: 760, y: 445, w: 70, h: 25 }
-        ],
-        enemies: [
-          { x: 295, y: 288, w: 32, h: 32, minX: 270, maxX: 350, speed: 0.85, dir: 1 },
-          { x: 720, y: 438, w: 34, h: 32, minX: 705, maxX: 850, speed: 1.35, dir: 1 }
-        ]
+        spikes: [],
+        enemies: []
       },
       {
         name: "Niveau 3",
@@ -382,17 +369,8 @@ Je t’aime énormément, Marki. Vraiment. 💜`;
           { x: 735, y: 85, taken: false },
           { x: 505, y: 105, taken: false }
         ],
-        spikes: [
-          { x: 215, y: 445, w: 75, h: 25 },
-          { x: 380, y: 445, w: 80, h: 25 },
-          { x: 500, y: 445, w: 85, h: 25 },
-          { x: 720, y: 445, w: 95, h: 25 }
-        ],
-        enemies: [
-          { x: 110, y: 438, w: 34, h: 32, minX: 90, maxX: 200, speed: 1.2, dir: 1 },
-          { x: 450, y: 238, w: 32, h: 32, minX: 430, maxX: 510, speed: 0.95, dir: 1 },
-          { x: 665, y: 223, w: 32, h: 32, minX: 635, maxX: 715, speed: 1.0, dir: 1 }
-        ]
+        spikes: [],
+        enemies: []
       }
     ];
 
@@ -731,7 +709,7 @@ Je t’aime énormément, Marki. Vraiment. 💜`;
       ctx.font = "bold 22px Arial";
       ctx.fillText(`${l.name} — récupère les cœurs puis la clé`, 24, 38);
       ctx.font = "15px Arial";
-      ctx.fillText("Portail ouvert seulement quand tous les cœurs du niveau sont récupérés et que Marki a la clé.", 24, 62);
+      ctx.fillText("Quand Marki récupère tous les cœurs et la clé, le portail s’ouvre.", 24, 62);
     }
 
     function updatePlayer() {
