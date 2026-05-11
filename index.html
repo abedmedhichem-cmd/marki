@@ -177,7 +177,7 @@
     <div class="topbar">
       <div>
         <h1>Marki et les cœurs 💜</h1>
-        <p class="subtitle">Récupère les cœurs, trouve la clé et rejoins le portail.</p>
+        <p class="subtitle">Récupère les cœurs, trouve la clé, évite les ennemis et rejoins le portail.</p>
       </div>
       <div class="hud">
         <div class="pill" id="levelBox">Niveau 1 / 3</div>
@@ -229,7 +229,8 @@
     let totalCollected = 0;
     let particles = [];
     let shake = 0;
-    let levelStartTime = performance.now();
+    let finalFlagMode = false;
+    let finalFlagTouched = false;
 
     const gravity = 0.72;
     const friction = 0.84;
@@ -271,7 +272,9 @@ Mais même après tous ces cœurs, ce n’est toujours pas assez.
 
 Parce que ce que je ressens pour toi est beaucoup plus grand qu’un jeu, plus grand qu’un message, plus grand que tous les cœurs que tu pourrais ramasser.
 
-Tu as récupéré tous les cœurs du jeu, mais dans la vraie vie, c’est toi qui as le mien.
+Tu as récupéré tous les cœurs du jeu, tu as ouvert la dernière porte, tu as sauté sur le drapeau…
+
+Mais dans la vraie vie, c’est toi qui as gagné mon cœur.
 
 Je t’aime énormément, Marki. Vraiment. 💜`;
 
@@ -290,9 +293,6 @@ Je t’aime énormément, Marki. Vraiment. 💜`;
           { x: 690, y: 340, w: 130, h: 20 },
           { x: 790, y: 250, w: 110, h: 20 }
         ],
-        moving: [
-          { x: 300, y: 420, w: 110, h: 18, startX: 300, startY: 420, rangeX: 100, rangeY: 0, speed: 0.018 }
-        ],
         hearts: [
           { x: 175, y: 345, taken: false },
           { x: 375, y: 290, taken: false },
@@ -301,8 +301,10 @@ Je t’aime énormément, Marki. Vraiment. 💜`;
           { x: 840, y: 205, taken: false },
           { x: 430, y: 425, taken: false }
         ],
-        spikes: [],
-        enemies: []
+        enemies: [
+          { x: 500, y: 438, w: 34, h: 32, minX: 455, maxX: 610, speed: 1.15, dir: 1, alive: true },
+          { x: 255, y: 358, w: 30, h: 30, minX: 140, maxX: 268, speed: 0.85, dir: -1, alive: true }
+        ]
       },
       {
         name: "Niveau 2",
@@ -317,11 +319,9 @@ Je t’aime énormément, Marki. Vraiment. 💜`;
           { x: 470, y: 370, w: 120, h: 20 },
           { x: 670, y: 315, w: 120, h: 20 },
           { x: 820, y: 238, w: 120, h: 20 },
-          { x: 70, y: 250, w: 110, h: 20 }
-        ],
-        moving: [
-          { x: 405, y: 250, w: 105, h: 18, startX: 405, startY: 250, rangeX: 140, rangeY: 0, speed: 0.021 },
-          { x: 610, y: 210, w: 105, h: 18, startX: 610, startY: 210, rangeX: 0, rangeY: 85, speed: 0.019 }
+          { x: 70, y: 250, w: 110, h: 20 },
+          { x: 405, y: 250, w: 105, h: 20 },
+          { x: 610, y: 210, w: 105, h: 20 }
         ],
         hearts: [
           { x: 130, y: 335, taken: false },
@@ -332,8 +332,11 @@ Je t’aime énormément, Marki. Vraiment. 💜`;
           { x: 455, y: 205, taken: false },
           { x: 655, y: 165, taken: false }
         ],
-        spikes: [],
-        enemies: []
+        enemies: [
+          { x: 295, y: 288, w: 32, h: 32, minX: 270, maxX: 385, speed: 0.85, dir: 1, alive: true },
+          { x: 720, y: 438, w: 34, h: 32, minX: 705, maxX: 850, speed: 1.35, dir: 1, alive: true },
+          { x: 478, y: 338, w: 32, h: 32, minX: 470, maxX: 590, speed: 0.95, dir: 1, alive: true }
+        ]
       },
       {
         name: "Niveau 3",
@@ -351,12 +354,8 @@ Je t’aime énormément, Marki. Vraiment. 💜`;
           { x: 430, y: 270, w: 110, h: 20 },
           { x: 635, y: 255, w: 110, h: 20 },
           { x: 810, y: 170, w: 125, h: 20 },
-          { x: 460, y: 150, w: 95, h: 20 }
-        ],
-        moving: [
-          { x: 205, y: 410, w: 95, h: 18, startX: 205, startY: 410, rangeX: 115, rangeY: 0, speed: 0.024 },
-          { x: 565, y: 360, w: 95, h: 18, startX: 565, startY: 360, rangeX: 0, rangeY: 120, speed: 0.021 },
-          { x: 690, y: 125, w: 95, h: 18, startX: 690, startY: 125, rangeX: 100, rangeY: 0, speed: 0.02 }
+          { x: 460, y: 150, w: 95, h: 20 },
+          { x: 690, y: 125, w: 95, h: 20 }
         ],
         hearts: [
           { x: 125, y: 340, taken: false },
@@ -364,17 +363,38 @@ Je t’aime énormément, Marki. Vraiment. 💜`;
           { x: 465, y: 225, taken: false },
           { x: 675, y: 210, taken: false },
           { x: 855, y: 125, taken: false },
-          { x: 250, y: 365, taken: false },
-          { x: 610, y: 315, taken: false },
+          { x: 250, y: 425, taken: false },
+          { x: 610, y: 425, taken: false },
           { x: 735, y: 85, taken: false },
           { x: 505, y: 105, taken: false }
         ],
-        spikes: [],
-        enemies: []
+        enemies: [
+          { x: 110, y: 438, w: 34, h: 32, minX: 90, maxX: 200, speed: 1.2, dir: 1, alive: true },
+          { x: 450, y: 238, w: 32, h: 32, minX: 430, maxX: 540, speed: 0.95, dir: 1, alive: true },
+          { x: 665, y: 223, w: 32, h: 32, minX: 635, maxX: 745, speed: 1.0, dir: 1, alive: true },
+          { x: 520, y: 438, w: 34, h: 32, minX: 450, maxX: 650, speed: 1.25, dir: -1, alive: true }
+        ]
       }
     ];
 
+    const flagStage = {
+      name: "Drapeau final",
+      spawn: { x: 65, y: 390 },
+      platforms: [
+        { x: 0, y: 470, w: 960, h: 70 },
+        { x: 180, y: 405, w: 120, h: 20 },
+        { x: 370, y: 340, w: 120, h: 20 },
+        { x: 570, y: 275, w: 120, h: 20 },
+        { x: 760, y: 210, w: 120, h: 20 }
+      ],
+      flag: { x: 845, y: 100, poleW: 8, poleH: 370, touched: false }
+    };
+
     function level() { return levels[levelIndex]; }
+
+    function currentPlatforms() {
+      return finalFlagMode ? flagStage.platforms : level().platforms;
+    }
 
     function totalHeartsInGame() {
       return levels.reduce((sum, l) => sum + l.hearts.length, 0);
@@ -386,6 +406,8 @@ Je t’aime énormément, Marki. Vraiment. 💜`;
       levelIndex = 0;
       lives = 3;
       totalCollected = 0;
+      finalFlagMode = false;
+      finalFlagTouched = false;
       levels.forEach(resetLevelObjects);
       loadLevel();
       gameRunning = true;
@@ -401,7 +423,10 @@ Je t’aime énormément, Marki. Vraiment. 💜`;
       l.hearts.forEach(h => h.taken = false);
       l.key.taken = false;
       l.checkpoints.forEach(c => c.active = false);
-      l.enemies.forEach(e => e.dir = 1);
+      l.enemies.forEach(e => {
+        e.dir = 1;
+        e.alive = true;
+      });
     }
 
     function loadLevel() {
@@ -413,7 +438,20 @@ Je t’aime énormément, Marki. Vraiment. 💜`;
       player.grounded = false;
       player.invincible = 0;
       player.checkpoint = { x: l.spawn.x, y: l.spawn.y };
-      levelStartTime = performance.now();
+      particles = [];
+      updateHud();
+    }
+
+    function loadFlagStage() {
+      finalFlagMode = true;
+      finalFlagTouched = false;
+      player.x = flagStage.spawn.x;
+      player.y = flagStage.spawn.y;
+      player.vx = 0;
+      player.vy = 0;
+      player.grounded = false;
+      player.invincible = 0;
+      player.checkpoint = { x: flagStage.spawn.x, y: flagStage.spawn.y };
       particles = [];
       updateHud();
     }
@@ -428,6 +466,11 @@ Je t’aime énormément, Marki. Vraiment. 💜`;
     }
 
     function hurtPlayer() {
+      if (finalFlagMode) {
+        respawnPlayer();
+        return;
+      }
+
       if (player.invincible > 0) return;
       lives--;
       updateHud();
@@ -439,6 +482,14 @@ Je t’aime énormément, Marki. Vraiment. 💜`;
     }
 
     function updateHud() {
+      if (finalFlagMode) {
+        levelBox.textContent = "Final";
+        heartBox.textContent = `Cœurs : ${totalCollected} / ${totalHeartsInGame()}`;
+        lifeBox.textContent = `Vies : ${lives}`;
+        keyBox.textContent = "Drapeau : saute dessus";
+        return;
+      }
+
       const l = level();
       const levelCollected = l.hearts.filter(h => h.taken).length;
       levelBox.textContent = `Niveau ${levelIndex + 1} / ${levels.length}`;
@@ -459,7 +510,17 @@ Je t’aime énormément, Marki. Vraiment. 💜`;
 
     function completeLevel() {
       if (levelIndex === levels.length - 1) {
-        showOverlay("Pour toi, Marki 💜", finalMessage, "Rejouer", restartGame, true);
+        showOverlay(
+          "Dernière porte ouverte 💜",
+          "Marki a ouvert la dernière porte. Il reste une dernière chose à faire : sauter sur le drapeau.",
+          "Aller au drapeau",
+          () => {
+            overlay.classList.add("hidden");
+            loadFlagStage();
+            gameRunning = true;
+            requestAnimationFrame(loop);
+          }
+        );
         return;
       }
 
@@ -475,6 +536,16 @@ Je t’aime énormément, Marki. Vraiment. 💜`;
           requestAnimationFrame(loop);
         }
       );
+    }
+
+    function touchFinalFlag() {
+      if (finalFlagTouched) return;
+      finalFlagTouched = true;
+      burst(flagStage.flag.x, player.y, "#ec4899");
+      burst(flagStage.flag.x + 25, player.y - 30, "#facc15");
+      setTimeout(() => {
+        showOverlay("Pour toi, Marki 💜", finalMessage, "Rejouer", restartGame, true);
+      }, 500);
     }
 
     function drawBackground() {
@@ -503,45 +574,19 @@ Je t’aime énormément, Marki. Vraiment. 💜`;
       ctx.fill();
     }
 
-    function updateMovingPlatforms(time) {
-      level().moving.forEach(p => {
-        p.prevX = p.x;
-        p.prevY = p.y;
-        p.x = p.startX + Math.sin(time * p.speed) * p.rangeX;
-        p.y = p.startY + Math.sin(time * p.speed) * p.rangeY;
-        p.dx = p.x - p.prevX;
-        p.dy = p.y - p.prevY;
-      });
-    }
-
     function drawPlatforms() {
-      [...level().platforms, ...level().moving].forEach(p => {
+      currentPlatforms().forEach(p => {
         ctx.fillStyle = "#ffffff";
         roundRect(p.x, p.y, p.w, p.h, 12);
         ctx.fill();
-        ctx.fillStyle = p.rangeX || p.rangeY ? "#c084fc" : "#f9a8d4";
+        ctx.fillStyle = "#f9a8d4";
         roundRect(p.x, p.y, p.w, 7, 12);
         ctx.fill();
       });
     }
 
-    function drawSpikes() {
-      level().spikes.forEach(s => {
-        ctx.fillStyle = "#4c1d95";
-        const count = Math.max(1, Math.floor(s.w / 18));
-        for (let i = 0; i < count; i++) {
-          const x = s.x + i * 18;
-          ctx.beginPath();
-          ctx.moveTo(x, s.y + s.h);
-          ctx.lineTo(x + 9, s.y);
-          ctx.lineTo(x + 18, s.y + s.h);
-          ctx.closePath();
-          ctx.fill();
-        }
-      });
-    }
-
     function drawHearts() {
+      if (finalFlagMode) return;
       level().hearts.forEach(h => {
         if (!h.taken) {
           const pulse = 1 + Math.sin(performance.now() / 180 + h.x) * 0.07;
@@ -564,6 +609,7 @@ Je t’aime énormément, Marki. Vraiment. 💜`;
     }
 
     function drawKey() {
+      if (finalFlagMode) return;
       const k = level().key;
       if (k.taken) return;
       const float = Math.sin(performance.now() / 250) * 4;
@@ -585,6 +631,7 @@ Je t’aime énormément, Marki. Vraiment. 💜`;
     }
 
     function drawDoor() {
+      if (finalFlagMode) return;
       const d = level().door;
       const open = level().key.taken && level().hearts.every(h => h.taken);
       ctx.fillStyle = open ? "#7c3aed" : "rgba(124,58,237,0.38)";
@@ -595,7 +642,30 @@ Je t’aime énormément, Marki. Vraiment. 💜`;
       ctx.fillText(open ? "💌" : "🔒", d.x + 7, d.y + 48);
     }
 
+    function drawFlag() {
+      if (!finalFlagMode) return;
+      const f = flagStage.flag;
+
+      ctx.fillStyle = "#f8fafc";
+      ctx.fillRect(f.x, f.y, f.poleW, f.poleH);
+      ctx.fillStyle = "#cbd5e1";
+      ctx.fillRect(f.x + f.poleW, f.y, 3, f.poleH);
+
+      ctx.fillStyle = finalFlagTouched ? "#22c55e" : "#ec4899";
+      ctx.beginPath();
+      ctx.moveTo(f.x + f.poleW, f.y + 12);
+      ctx.lineTo(f.x + 85, f.y + 32);
+      ctx.lineTo(f.x + f.poleW, f.y + 55);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.fillStyle = "#7c3aed";
+      ctx.font = "bold 16px Arial";
+      ctx.fillText("SAUTE ICI", f.x - 35, f.y - 14);
+    }
+
     function drawCheckpoints() {
+      if (finalFlagMode) return;
       level().checkpoints.forEach(c => {
         ctx.fillStyle = c.active ? "#22c55e" : "#a855f7";
         ctx.fillRect(c.x + 10, c.y, 5, c.h);
@@ -609,14 +679,18 @@ Je t’aime énormément, Marki. Vraiment. 💜`;
     }
 
     function updateEnemies() {
+      if (finalFlagMode) return;
       level().enemies.forEach(e => {
+        if (!e.alive) return;
         e.x += e.speed * e.dir;
         if (e.x <= e.minX || e.x + e.w >= e.maxX) e.dir *= -1;
       });
     }
 
     function drawEnemies() {
+      if (finalFlagMode) return;
       level().enemies.forEach(e => {
+        if (!e.alive) return;
         ctx.fillStyle = "#581c87";
         roundRect(e.x, e.y, e.w, e.h, 14);
         ctx.fill();
@@ -625,6 +699,11 @@ Je t’aime énormément, Marki. Vraiment. 💜`;
         ctx.arc(e.x + 10, e.y + 12, 3, 0, Math.PI * 2);
         ctx.arc(e.x + 23, e.y + 12, 3, 0, Math.PI * 2);
         ctx.fill();
+        ctx.fillStyle = "#f9a8d4";
+        ctx.beginPath();
+        ctx.arc(e.x + 10, e.y + 23, 4, 0, Math.PI);
+        ctx.arc(e.x + 23, e.y + 23, 4, 0, Math.PI);
+        ctx.fill();
       });
     }
 
@@ -632,7 +711,6 @@ Je t’aime énormément, Marki. Vraiment. 💜`;
       ctx.save();
       if (player.invincible > 0 && Math.floor(player.invincible / 6) % 2 === 0) ctx.globalAlpha = 0.45;
 
-      // Corps / robe
       ctx.fillStyle = "#ec4899";
       ctx.beginPath();
       ctx.moveTo(player.x + player.w / 2, player.y + 24);
@@ -641,13 +719,11 @@ Je t’aime énormément, Marki. Vraiment. 💜`;
       ctx.closePath();
       ctx.fill();
 
-      // Tête
       ctx.fillStyle = "#ffd1dc";
       ctx.beginPath();
       ctx.arc(player.x + player.w / 2, player.y + 15, 14, 0, Math.PI * 2);
       ctx.fill();
 
-      // Cheveux
       ctx.fillStyle = "#2b173f";
       ctx.beginPath();
       ctx.arc(player.x + player.w / 2, player.y + 9, 16, Math.PI, Math.PI * 2);
@@ -655,14 +731,12 @@ Je t’aime énormément, Marki. Vraiment. 💜`;
       ctx.fillRect(player.x + 3, player.y + 8, 8, 25);
       ctx.fillRect(player.x + player.w - 11, player.y + 8, 8, 25);
 
-      // Yeux
       ctx.fillStyle = "#2b173f";
       ctx.beginPath();
       ctx.arc(player.x + 12, player.y + 15, 2, 0, Math.PI * 2);
       ctx.arc(player.x + 22, player.y + 15, 2, 0, Math.PI * 2);
       ctx.fill();
 
-      // Petit cœur au-dessus
       drawHeart(player.x + player.w / 2, player.y - 8, 8, "#ec4899");
 
       ctx.fillStyle = "#7c3aed";
@@ -704,9 +778,17 @@ Je t’aime énormément, Marki. Vraiment. 💜`;
     }
 
     function drawText() {
-      const l = level();
       ctx.fillStyle = "rgba(43,23,63,0.84)";
       ctx.font = "bold 22px Arial";
+
+      if (finalFlagMode) {
+        ctx.fillText("Dernière étape — saute sur le drapeau", 24, 38);
+        ctx.font = "15px Arial";
+        ctx.fillText("Le message final s’affiche uniquement quand Marki touche le drapeau.", 24, 62);
+        return;
+      }
+
+      const l = level();
       ctx.fillText(`${l.name} — récupère les cœurs puis la clé`, 24, 38);
       ctx.font = "15px Arial";
       ctx.fillText("Quand Marki récupère tous les cœurs et la clé, le portail s’ouvre.", 24, 62);
@@ -727,7 +809,7 @@ Je t’aime énormément, Marki. Vraiment. 💜`;
       player.vy += gravity;
       if (player.vy > 18) player.vy = 18;
 
-      const solids = [...level().platforms, ...level().moving];
+      const solids = currentPlatforms();
 
       player.x += player.vx;
       solids.forEach(p => collideHorizontal(player, p));
@@ -754,10 +836,6 @@ Je t’aime énormément, Marki. Vraiment. 💜`;
         a.y = p.y - a.h;
         a.vy = 0;
         a.grounded = true;
-        if (p.dx || p.dy) {
-          a.x += p.dx || 0;
-          a.y += p.dy || 0;
-        }
       } else if (a.vy < 0) {
         a.y = p.y + p.h;
         a.vy = 0;
@@ -765,6 +843,7 @@ Je t’aime énormément, Marki. Vraiment. 💜`;
     }
 
     function checkCollectibles() {
+      if (finalFlagMode) return;
       const l = level();
 
       l.hearts.forEach(h => {
@@ -792,15 +871,14 @@ Je t’aime énormément, Marki. Vraiment. 💜`;
     }
 
     function checkDanger() {
-      level().spikes.forEach(s => {
-        if (rectsOverlap(player, s)) hurtPlayer();
-      });
+      if (finalFlagMode) return;
 
       level().enemies.forEach(e => {
+        if (!e.alive) return;
         if (rectsOverlap(player, e)) {
           const playerBottomBefore = player.y + player.h - player.vy;
-          if (player.vy > 0 && playerBottomBefore <= e.y + 8) {
-            e.x = -9999;
+          if (player.vy > 0 && playerBottomBefore <= e.y + 10) {
+            e.alive = false;
             player.vy = -10;
             burst(player.x + player.w / 2, player.y + player.h, "#a855f7");
           } else {
@@ -811,11 +889,19 @@ Je t’aime énormément, Marki. Vraiment. 💜`;
     }
 
     function checkDoor() {
+      if (finalFlagMode) return;
       const l = level();
       const open = l.key.taken && l.hearts.every(h => h.taken);
       if (open && rectsOverlap(player, l.door)) {
         completeLevel();
       }
+    }
+
+    function checkFlag() {
+      if (!finalFlagMode || finalFlagTouched) return;
+      const f = flagStage.flag;
+      const pole = { x: f.x - 8, y: f.y, w: 28, h: f.poleH };
+      if (rectsOverlap(player, pole)) touchFinalFlag();
     }
 
     function rectsOverlap(a, b) {
@@ -844,19 +930,19 @@ Je t’aime énormément, Marki. Vraiment. 💜`;
       ctx.closePath();
     }
 
-    function loop(time) {
+    function loop() {
       if (!gameRunning) return;
       if (paused) {
         requestAnimationFrame(loop);
         return;
       }
 
-      updateMovingPlatforms(time);
       updateEnemies();
       updatePlayer();
       checkCollectibles();
       checkDanger();
       checkDoor();
+      checkFlag();
       updateParticles();
 
       ctx.save();
@@ -868,9 +954,9 @@ Je t’aime énormément, Marki. Vraiment. 💜`;
 
       drawBackground();
       drawPlatforms();
-      drawSpikes();
       drawCheckpoints();
       drawDoor();
+      drawFlag();
       drawKey();
       drawHearts();
       drawEnemies();
